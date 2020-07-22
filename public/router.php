@@ -9,6 +9,7 @@ if (isset($_GET["request"])) {
 
 switch ($request) {
     case "viewMain":
+    case "viewRegister":
         ControllerMain::$request();
         break;
     default:
