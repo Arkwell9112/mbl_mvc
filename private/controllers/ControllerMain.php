@@ -8,7 +8,7 @@ class ControllerMain
         $title = "Accueil";
         $firstref = "https://monboulangerlivreur.fr/public/router.php?request=viewRegister";
         $firstfield = "S'inscrire";
-        $secondref = "#";
+        $secondref = "https://monboulangerlivreur.fr/public/router.php?request=viewSignin";
         $secondfield = "Se Connecter";
         include("/var/www/mbl/private/views/main.php");
     }
@@ -18,8 +18,18 @@ class ControllerMain
         $title = "Inscription";
         $firstref = "https://monboulangerlivreur.fr/public/router.php";
         $firstfield = "Accueil";
-        $secondref = "#";
+        $secondref = "https://monboulangerlivreur.fr/public/router.php?request=viewSignin";
         $secondfield = "Se Connecter";
         include("/var/www/mbl/private/views/register.php");
+    }
+
+    public static function viewSignin()
+    {
+        $title = "Connexion";
+        $firstref = "https://monboulangerlivreur.fr/public/router.php";
+        $firstfield = "Accueil";
+        $secondref = "https://monboulangerlivreur.fr/public/router.php?request=viewRegister";
+        $secondfield = "S'inscrire";
+        include("/var/www/mbl/private/views/signin.php");
     }
 }
