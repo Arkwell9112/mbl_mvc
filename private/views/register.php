@@ -15,7 +15,7 @@ include("/var/www/mbl/private/frags/fragHeader.php");
                 echo "<div class='yespanel'>L'inscription a réussi.<br>Vous allez recevoir un mail permettant l'activation de votre compte. N'oubliez pas de regarder dans vos courriers indésirables.</div>";
             }
             ?>
-            <form method="post" action="signupaction.php">
+            <form method="post" action="https://monboulangerlivreur.fr/public/router.php?request=actionPreRegister">
                 <?php
                 if (preg_match("#badusername#", $status)) {
                     echo "<div class='errorpanel'>Le nom d'utilisateur doit contenir :<br>- Au moins 4 caractères.<br>- Uniquement des lettres ou chiffres.<br></div>";
@@ -50,7 +50,7 @@ include("/var/www/mbl/private/frags/fragHeader.php");
                 if (preg_match("#badphone#", $status)) {
                     echo "<div class='errorpanel'>Le numéro de téléphone est incorrect.</div>";
                 }
-                if (preg_match("#mailexists#", $status)) {
+                if (preg_match("#phoneexists#", $status)) {
                     echo "<div class='infopanel'>Le numéro de téléphone est déjà utilisé.</div>";
                 }
                 ?>
