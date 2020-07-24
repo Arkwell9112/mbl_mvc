@@ -56,6 +56,11 @@ include("/var/www/mbl/private/frags/fragHeader.php");
                 ?>
                 <input value="<?php if (isset($_GET["phone"])) echo $_GET["phone"] ?>" type="tel" name="phone"
                        placeholder="Numéro de téléphone"><br>
+                <?php
+                if (preg_match("#badaddress#", $status)) {
+                    echo "<div class='errorpanel'>L'adresse entrée n'a pu être trouvée dans le village choisi.</div>";
+                }
+                ?>
                 <input value="<?php if (isset($_GET["address"])) echo $_GET["address"] ?>"
                        placeholder="N° et nom de rue"
                        type="text" name="address">
@@ -66,6 +71,12 @@ include("/var/www/mbl/private/frags/fragHeader.php");
                 ?>
                 <select class="cityselect" name="city">
                     <option value="none">Sélectionnez votre village de résidence</option>
+                    <?php
+                    foreach ($cities as $city) {
+                        $name = $city["name"];
+                        echo "<option value='$name'>$name</option>";
+                    }
+                    ?>
                 </select><br>
                 <input id="submit" type="submit" value="Inscription">
             </form>

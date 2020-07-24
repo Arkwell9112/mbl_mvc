@@ -4,6 +4,7 @@
 class Manager
 {
     private static $pdo;
+    private static $google;
 
     public static function getPDO(): PDO
     {
@@ -18,5 +19,16 @@ class Manager
         }
 
         return self::$pdo;
+    }
+
+    public static function getGoogleKey()
+    {
+        if (!isset(self::$google)) {
+            $key = array();
+            exec("cat /var/google.conf", $key);
+            self::$google = $key[0];
+        }
+
+        return self::$google;
     }
 }

@@ -20,6 +20,18 @@ class ControllerMain
         $firstfield = "Accueil";
         $secondref = "https://monboulangerlivreur.fr/public/router.php?request=viewSignin";
         $secondfield = "Se Connecter";
+
+        if (isset($_GET["status"])) {
+            $status = $_GET["status"];
+        }
+
+        $bdd = Manager::getPDO();
+
+        $statement = $bdd->prepare("SELECT * FROM cities");
+        $statement->execute();
+
+        $cities = $statement->fetchAll();
+
         include("/var/www/mbl/private/views/register.php");
     }
 
@@ -54,7 +66,7 @@ class ControllerMain
         }
 
         if (isset($_POST["mail"])) {
-            if (filter_var($_POST["mail"], FILTER_FLAG_EMAIL_UNICODE) != $_POST["mail"]) {
+            if (!(filter_var($_POST["mail"], FILTER_FLAG_EMAIL_UNICODE) != $_POST["mail"])) {
                 $error = $error . "badmail";
             }
         } else {
@@ -88,6 +100,69 @@ class ControllerMain
             $users = $statement->fetchAll();
             if (count($users) == 1) {
                 $error = $error . "usernameexists";
+            }
+
+            $statement = $bdd->prepare("SELECT * FROM users WHERE mail=:mail");
+            $statement->execute(array(
+                "mail" => $_POST["mail"]
+            ));
+
+            $users = $statement->fetchAll();
+            if (count($users) == 1) {
+                $error = $error . "mailexists";
+            }
+
+            $statement = $bdd->prepare("SELECT * FROM users WHERE phone=:phone");
+            $statement->execute(array(
+                "phone" => $_POST["phone"]
+            ));
+
+            $users = $statement->fetchAll();
+            if (count($users) == 1) {
+                $error = $error . "phoneexists";
+            }
+
+            $statement = $bdd->prepare("SELECT * FROM cities WHERE name=:name");
+            $statement->execute(array(
+                "name" => $_POST["city"]
+            ));
+
+            $cities = $statement->fetchAll();
+            if (count($cities) != 1) {
+                $error = $error . "badcity";
+            }
+        }
+
+        if ($error == "") {
+            $address = $_POST["address"] . ", " . $_POST["city"] . ", " . "France";
+            $address = urlencode($address);
+            $key = Manager::getGoogleKey();
+            $geo = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?address=$address&key=$key");
+            $geo = json_decode($geo, true);
+            if (isset($geo["status"])) {
+                if ($geo["status"] == "OK") {
+                    $address = $geo["results"][0]["formatted_address"];
+                    $city = $_POST["city"];
+                    if (preg_match("#$city#", $address)) {
+                        session_start();
+                        $_SESSION["username"] = $_POST["username"];
+                        $_SESSION["passwd"] = $_POST["passwd1"];
+                        $_SESSION["mail"] = $_POST["mail"];
+                        $_SESSION["phone"] = $_POST["phone"];
+                        $_SESSION["address"] = $address;
+                        $_SESSION["city"] = $_POST["city"];
+                        $_SESSION["geocode"] = $geo["results"][0]["geometry"]["location"]["lat"] . "," . $geo["results"][0]["geometry"]["location"]["lng"];
+                        header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewPostRegister");
+                        ob_flush();
+                        exit();
+                    } else {
+                        $error = $error . "badaddress";
+                    }
+                } else {
+                    $error = $error . "special";
+                }
+            } else {
+                $error = $error . "special";
             }
         }
 
