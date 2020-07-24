@@ -13,10 +13,9 @@ class Model
         $this->primaries = array();
     }
 
-    protected function createPrimaryString(array &$primattributes): string
+    protected function createPrimaryString(): string
     {
         $primarystring = " WHERE";
-        $primattributes = array();
 
         for ($i = 0; $i <= count($this->primaries) - 1; $i++) {
             $primary = $this->primaries[$i];
@@ -25,8 +24,6 @@ class Model
             if ($i != count($this->primaries) - 1) {
                 $primarystring = $primarystring . " AND";
             }
-
-            $primattributes[$primary] = $this->attributes[$primary];
         }
 
         return $primarystring;

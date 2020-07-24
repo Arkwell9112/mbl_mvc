@@ -173,4 +173,47 @@ class ControllerMain
         $address = $_POST["address"];
         header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewRegister&status=$error&username=$username&mail=$mail&phone=$phone&address=$address");
     }
+
+    public static function viewPostRegister()
+    {
+        session_start();
+
+        if (isset($_SESSION["username"])) {
+
+            $address = $_SESSION["address"];
+
+            $firstref = "https://monboulangerlivreur.fr/public/router.php?request=viewMain";
+            $firstfield = "Accueil";
+            $secondref = "https://monboulangerlivreur.fr/public/router.php?request=viewSignin";
+            $secondfield = "Se Connecter";
+
+            include("/var/www/mbl/private/views/postregister.php");
+        } else {
+            header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewRegister");
+        }
+    }
+
+    public static function actionRegister()
+    {
+        if (isset($_POST["validation"])) {
+
+            session_start();
+
+            if ($_POST["validation"] == "yes") {
+                $user = new User($_SESSION["username"], $_SESSION["passwd"], $_SESSION["mail"], $_SESSION["phone"], $_SESSION["address"], $_SESSION["city"], $_SESSION["geocode"]);
+                $user->insert();
+                session_unset();
+                header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewRegister&status=yes");
+            } else {
+                $username = $_SESSION["username"];
+                $mail = $_SESSION["mail"];
+                $phone = $_SESSION["phone"];
+                $address = $_SESSION["address"];
+                session_unset();
+                header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewRegister&username=$username&mail=$mail&phone=$phone&address=$address");
+            }
+        } else {
+            header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewRegister");
+        }
+    }
 }
