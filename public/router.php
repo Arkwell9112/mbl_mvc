@@ -1,5 +1,5 @@
 <?php
-require_once("../private/controllers/ControllerMain.php");
+require_once("/var/www/mbl/private/controllers/ControllerMain.php");
 
 if (isset($_GET["request"])) {
     $request = $_GET["request"];

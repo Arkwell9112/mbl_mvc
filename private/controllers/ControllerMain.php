@@ -1,5 +1,6 @@
 <?php
 require_once("/var/www/mbl/private/Manager.php");
+require_once("/var/www/mbl/private/models/User.php");
 
 class ControllerMain
 {
