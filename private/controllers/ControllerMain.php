@@ -2,6 +2,7 @@
 require_once("/var/www/mbl/private/Manager.php");
 require_once("/var/www/mbl/private/models/User.php");
 require_once("/var/www/mbl/private/models/Connection.php");
+require_once("/var/www/mbl/private/models/City.php");
 
 class ControllerMain
 {
@@ -51,7 +52,7 @@ class ControllerMain
         $statement = $bdd->prepare("SELECT * FROM cities");
         $statement->execute();
 
-        $cities = $statement->fetchAll();
+        $cities = $statement->fetchAll(PDO::FETCH_CLASS, "City");
 
         include("/var/www/mbl/private/views/register.php");
     }

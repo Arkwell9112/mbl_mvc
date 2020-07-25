@@ -73,7 +73,7 @@ include("/var/www/mbl/private/frags/fragHeader.php");
                     <option value="none">Sélectionnez votre village de résidence</option>
                     <?php
                     foreach ($cities as $city) {
-                        $name = $city["name"];
+                        $name = $city->getAttributes()["name"];
                         echo "<option value='$name'>$name</option>";
                     }
                     ?>
