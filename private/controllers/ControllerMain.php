@@ -144,7 +144,7 @@ class ControllerMain
                 if ($geo["status"] == "OK") {
                     $address = $geo["results"][0]["formatted_address"];
                     $city = $_POST["city"];
-                    if (preg_match("#$city#", $address)) {
+                    if (preg_match("#$city#", $address) && count(explode(",", $address)) >= 3) {
                         session_start();
                         $_SESSION["username"] = $_POST["username"];
                         $_SESSION["passwd"] = $_POST["passwd1"];
@@ -195,9 +195,9 @@ class ControllerMain
 
     public static function actionRegister()
     {
-        if (isset($_POST["validation"])) {
+        session_start();
 
-            session_start();
+        if (isset($_POST["validation"]) && isset($_SESSION["username"])) {
 
             if ($_POST["validation"] == "yes") {
                 $user = new User($_SESSION["username"], $_SESSION["passwd"], $_SESSION["mail"], $_SESSION["phone"], $_SESSION["address"], $_SESSION["city"], $_SESSION["geocode"]);
