@@ -14,6 +14,7 @@ switch ($request) {
     case "actionPreRegister":
     case "viewPostRegister":
     case "actionRegister":
+    case "actionSignin":
         ControllerMain::$request();
         break;
     default:

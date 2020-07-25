@@ -1,5 +1,6 @@
 <?php
 require_once("/var/www/mbl/private/models/Model.php");
+require_once("/var/www/mbl/private/models/MBLException.php");
 
 class Connection extends Model
 {
@@ -45,6 +46,10 @@ class Connection extends Model
 
         if (!password_verify($passwd, $hashword)) {
             throw new MBLException("badpasswd");
+        }
+
+        if ($user->getAttributes()["active"] != 1) {
+            throw new MBLException("notactive");
         }
 
         $statement = $bdd->prepare("SELECT * FROM connections WHERE username=:username");

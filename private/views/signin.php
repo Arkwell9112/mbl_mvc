@@ -8,7 +8,7 @@ include("/var/www/mbl/private/frags/fragHeader.php");
             <h3>Se connecter</h3>
         </div>
         <div class="signform" id="toreplaceform">
-            <form method="post" action="signinaction.php">
+            <form method="post" action="https://monboulangerlivreur.fr/public/router.php?request=actionSignin">
                 <?php
                 if (preg_match("#special#", $status)) {
                     echo "<div class='errorpanel'>Une erreur est survenue, veuillez-réessayer.</div>";

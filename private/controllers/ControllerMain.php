@@ -1,6 +1,7 @@
 <?php
 require_once("/var/www/mbl/private/Manager.php");
 require_once("/var/www/mbl/private/models/User.php");
+require_once("/var/www/mbl/private/models/Connection.php");
 
 class ControllerMain
 {
@@ -38,6 +39,10 @@ class ControllerMain
 
     public static function viewSignin()
     {
+        if (isset($_GET["status"])) {
+            $status = $_GET["status"];
+        }
+
         $title = "Connexion";
         $firstref = "https://monboulangerlivreur.fr/public/router.php";
         $firstfield = "Accueil";
@@ -214,6 +219,25 @@ class ControllerMain
             }
         } else {
             header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewRegister");
+        }
+    }
+
+    public static function actionSignin()
+    {
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
+
+        if (isset($_POST["username"]) && isset($_POST["passwd"])) {
+            try {
+                $connection = Connection::createConnection($_POST["username"], $_POST["passwd"]);
+                header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount");
+            } catch (MBLException $e) {
+                $status = $e->getMessage();
+                header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin&status=$status");
+            }
+        } else {
+            header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin");
         }
     }
 }

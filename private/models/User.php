@@ -10,6 +10,7 @@ class User extends Model
     private $address;
     private $city;
     private $geocode;
+    private $active;
 
     public function __construct($username = null, $passwd = null, $mail = null, $phone = null, $address = null, $city = null, $geocode = null)
     {
@@ -25,6 +26,7 @@ class User extends Model
             $this->address = $address;
             $this->city = $city;
             $this->geocode = $geocode;
+            $this->active = 0;
         }
 
         $this->attributes["username"] = $this->username;
@@ -34,5 +36,6 @@ class User extends Model
         $this->attributes["address"] = $this->address;
         $this->attributes["city"] = $this->city;
         $this->attributes["geocode"] = $this->geocode;
+        $this->attributes["active"] = $this->active;
     }
 }
