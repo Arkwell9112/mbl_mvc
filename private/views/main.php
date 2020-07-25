@@ -42,6 +42,6 @@ include("/var/www/mbl/private/frags/fragHeader.php");
         </ul>
     </article>
     <article id="beginbutton">
-        <a href="../pages/signup.php">Commencer maintenant !</a>
+        <a href="https://monboulangerlivreur.fr/public/router.php?request=viewRegister">Commencer maintenant !</a>
     </article>
 <?php include("/var/www/mbl/private/frags/fragFooter.php") ?>

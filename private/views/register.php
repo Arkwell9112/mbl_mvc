@@ -80,7 +80,8 @@ include("/var/www/mbl/private/frags/fragHeader.php");
                 </select><br>
                 <input id="submit" type="submit" value="Inscription">
             </form>
-            <a class="bottomlink" href="signin.php">Déjà inscrit ? Connectez-vous !</a>
+            <a class="bottomlink" href="https://monboulangerlivreur.fr/public/router.php?request=viewSignin">Déjà
+                inscrit ? Connectez-vous !</a>
         </div>
     </article>
 <?php include("/var/www/mbl/private/frags/fragFooter.php") ?>

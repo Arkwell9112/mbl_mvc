@@ -71,7 +71,7 @@ class Connection extends Model
         return $connection;
     }
 
-    public static function retrieveConnection()
+    public static function retrieveConnection(): Connection
     {
         if (!isset($_COOKIE["token"])) {
             throw new MBLException("badtoken");

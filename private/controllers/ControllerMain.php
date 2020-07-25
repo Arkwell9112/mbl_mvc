@@ -7,21 +7,40 @@ class ControllerMain
 {
     public static function viewMain()
     {
-        $title = "Accueil";
-        $firstref = "https://monboulangerlivreur.fr/public/router.php?request=viewRegister";
-        $firstfield = "S'inscrire";
-        $secondref = "https://monboulangerlivreur.fr/public/router.php?request=viewSignin";
-        $secondfield = "Se Connecter";
+        try {
+            $connection = Connection::retrieveConnection();
+            $user = $connection->getUser();
+
+            $title = "Accueil";
+            $firstref = "#";
+            $firstfield = $user->getAttributes()["username"];
+            $secondref = "https://monboulangerlivreur.fr/public/router.php?request=viewAccount";
+            $secondfield = "Mon compte";
+        } catch (MBLException $e) {
+            $title = "Accueil";
+            $firstref = "https://monboulangerlivreur.fr/public/router.php?request=viewRegister";
+            $firstfield = "S'inscrire";
+            $secondref = "https://monboulangerlivreur.fr/public/router.php?request=viewSignin";
+            $secondfield = "Se Connecter";
+        }
         include("/var/www/mbl/private/views/main.php");
     }
 
     public static function viewRegister()
     {
-        $title = "Inscription";
-        $firstref = "https://monboulangerlivreur.fr/public/router.php";
-        $firstfield = "Accueil";
-        $secondref = "https://monboulangerlivreur.fr/public/router.php?request=viewSignin";
-        $secondfield = "Se Connecter";
+        try {
+            $connection = Connection::retrieveConnection();
+
+            header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount");
+            ob_flush();
+            exit();
+        } catch (MBLException $e) {
+            $title = "Inscription";
+            $firstref = "https://monboulangerlivreur.fr/public/router.php";
+            $firstfield = "Accueil";
+            $secondref = "https://monboulangerlivreur.fr/public/router.php?request=viewSignin";
+            $secondfield = "Se Connecter";
+        }
 
         if (isset($_GET["status"])) {
             $status = $_GET["status"];
@@ -39,6 +58,20 @@ class ControllerMain
 
     public static function viewSignin()
     {
+        try {
+            $connection = Connection::retrieveConnection();
+
+            header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount");
+            ob_flush();
+            exit();
+        } catch (MBLException $e) {
+            $title = "Inscription";
+            $firstref = "https://monboulangerlivreur.fr/public/router.php";
+            $firstfield = "Accueil";
+            $secondref = "https://monboulangerlivreur.fr/public/router.php?request=viewRegister";
+            $secondfield = "S'inscrire";
+        }
+
         if (isset($_GET["status"])) {
             $status = $_GET["status"];
         }
@@ -187,6 +220,7 @@ class ControllerMain
 
             $address = $_SESSION["address"];
 
+            $title = "Inscription";
             $firstref = "https://monboulangerlivreur.fr/public/router.php?request=viewMain";
             $firstfield = "Accueil";
             $secondref = "https://monboulangerlivreur.fr/public/router.php?request=viewSignin";
@@ -224,10 +258,6 @@ class ControllerMain
 
     public static function actionSignin()
     {
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
-        error_reporting(E_ALL);
-
         if (isset($_POST["username"]) && isset($_POST["passwd"])) {
             try {
                 $connection = Connection::createConnection($_POST["username"], $_POST["passwd"]);
