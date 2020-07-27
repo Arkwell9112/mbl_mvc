@@ -38,4 +38,23 @@ class User extends Model
         $this->attributes["geocode"] = $this->geocode;
         $this->attributes["active"] = $this->active;
     }
+
+    public function insert()
+    {
+        parent::insert();
+
+        $to = $this->attributes["mail"];
+        $subject = "Vérification de votre compte MonBoulangerLivreur.fr";
+
+        $headers = array();
+        $headers["From"] = "MonBoulangerLivreur.fr <no-reply@monboulangerlivreur.fr>";
+        $headers["Reply-To"] = "MonBoulangerLivreur.fr <contact@monboulangerlivreur.fr>";
+        $headers["MIME-Version"] = "1.0";
+        $headers["Content-type"] = "text/html; charset: utf8";
+
+        $message = file_get_contents("/var/www/mbl/private/frags/fragMailRegister.html");
+        $message = wordwrap($message, 70, "\r\n");
+
+        mail($to, $subject, $message, $headers);
+    }
 }
