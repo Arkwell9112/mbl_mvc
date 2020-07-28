@@ -10,7 +10,7 @@ class Manager
     {
         if (!isset(self::$pdo)) {
             $config = array();
-            exec("cat /var/mbl.conf", $config);
+            exec("cat /etc/mbl.creds", $config);
             $host = $config[2];
             $port = $config[3];
             $dbname = $config[4];
@@ -25,8 +25,8 @@ class Manager
     {
         if (!isset(self::$google)) {
             $key = array();
-            exec("cat /var/google.conf", $key);
-            self::$google = $key[0];
+            exec("cat /etc/mbl.creds", $key);
+            self::$google = $key[5];
         }
 
         return self::$google;

@@ -11,6 +11,7 @@ class User extends Model
     private $city;
     private $geocode;
     private $active;
+    private $vhash;
 
     public function __construct($username = null, $passwd = null, $mail = null, $phone = null, $address = null, $city = null, $geocode = null)
     {
@@ -27,6 +28,7 @@ class User extends Model
             $this->city = $city;
             $this->geocode = $geocode;
             $this->active = 0;
+            $this->vhash = password_hash(random_int(PHP_INT_MIN, PHP_INT_MAX), PASSWORD_DEFAULT);
         }
 
         $this->attributes["username"] = $this->username;
@@ -37,6 +39,7 @@ class User extends Model
         $this->attributes["city"] = $this->city;
         $this->attributes["geocode"] = $this->geocode;
         $this->attributes["active"] = $this->active;
+        $this->attributes["vhash"] = $this->vhash;
     }
 
     public function insert()
@@ -53,6 +56,8 @@ class User extends Model
         $headers["Content-type"] = "text/html; charset: utf8";
 
         $message = file_get_contents("/var/www/mbl/private/frags/fragMailRegister.html");
+        $message = str_replace("+username+", $this->attributes["username"], $message);
+        $message = str_replace("+token+", $this->attributes["vhash"], $message);
         $message = wordwrap($message, 70, "\r\n");
 
         mail($to, $subject, $message, $headers);
