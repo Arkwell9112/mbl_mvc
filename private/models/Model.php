@@ -13,13 +13,15 @@ class Model
         $this->primaries = array();
     }
 
-    protected function createPrimaryString(): string
+    protected function createPrimaryString(&$primattributes): string
     {
         $primarystring = " WHERE";
+        $primattributes = array();
 
         for ($i = 0; $i <= count($this->primaries) - 1; $i++) {
             $primary = $this->primaries[$i];
             $primarystring = $primarystring . " $primary=:$primary";
+            $primattributes[$primary] = $this->attributes[$primary];
 
             if ($i != count($this->primaries) - 1) {
                 $primarystring = $primarystring . " AND";
@@ -61,10 +63,10 @@ class Model
         $table = $this->table;
 
         $sql = "DELETE FROM $table";
-        $sql = $sql . $this->createPrimaryString();
+        $sql = $sql . $this->createPrimaryString($primattributes);
         $bdd = Manager::getPDO();
         $statement = $bdd->prepare($sql);
-        $statement->execute($this->attributes);
+        $statement->execute($primattributes);
     }
 
     public function update()
@@ -72,10 +74,10 @@ class Model
         $table = $this->table;
 
         $sql = "SELECT * FROM $table";
-        $sql = $sql . $this->createPrimaryString();
+        $sql = $sql . $this->createPrimaryString($primattributes);
         $bdd = Manager::getPDO();
         $statement = $bdd->prepare($sql);
-        $statement->execute($this->attributes);
+        $statement->execute($primattributes);
 
         $result = $statement->fetchAll()[0];
 
@@ -89,14 +91,13 @@ class Model
         $table = $this->table;
 
         $sql = "UPDATE $table SET $column=:$column";
-        $sql = $sql . $this->createPrimaryString();
+        $sql = $sql . $this->createPrimaryString($primattributes);
         $bdd = Manager::getPDO();
         $statement = $bdd->prepare($sql);
 
-        $newattributes = $this->attributes;
-        $newattributes[$column] = $value;
+        $primattributes[$column] = $value;
 
-        $statement->execute($newattributes);
+        $statement->execute($primattributes);
 
         $this->update();
     }

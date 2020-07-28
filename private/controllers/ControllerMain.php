@@ -45,6 +45,8 @@ class ControllerMain
 
         if (isset($_GET["status"])) {
             $status = $_GET["status"];
+        } else {
+            $status = "";
         }
 
         $bdd = Manager::getPDO();
@@ -75,6 +77,8 @@ class ControllerMain
 
         if (isset($_GET["status"])) {
             $status = $_GET["status"];
+        } else {
+            $status = "";
         }
 
         $title = "Connexion";
@@ -266,6 +270,28 @@ class ControllerMain
             } catch (MBLException $e) {
                 $status = $e->getMessage();
                 header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin&status=$status");
+            }
+        } else {
+            header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin");
+        }
+    }
+
+    public static function actionActivate()
+    {
+        if (isset($_GET["token"])) {
+            $bdd = Manager::getPDO();
+
+            $statement = $bdd->prepare("SELECT * FROM users WHERE vhash=:token");
+            $statement->execute(array(
+                "token" => $_GET["token"]
+            ));
+            $users = $statement->fetchAll(PDO::FETCH_CLASS, "User");
+
+            if (count($users) == 1) {
+                $users[0]->set("active", "1");
+                header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin&status=yesactive");
+            } else {
+                header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin&status=badtoken");
             }
         } else {
             header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin");
