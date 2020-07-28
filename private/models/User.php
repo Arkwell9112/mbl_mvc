@@ -62,4 +62,24 @@ class User extends Model
 
         mail($to, $subject, $message, $headers);
     }
+
+    public function prepareReset()
+    {
+        $this->set("vhash", password_hash(random_int(PHP_INT_MIN, PHP_INT_MAX), PASSWORD_DEFAULT));
+
+        $headers = array();
+        $headers["MIME-Version"] = "1.0";
+        $headers["Content-type"] = "text/html; charset=UTF-8";
+        $headers["From"] = "MonBoulangerLivreur.fr <no-reply@monboulangerlivreur.fr>";
+        $headers["Reply-To"] = "MonBoulangerLivreur.fr <contact@monboulangerlivreur.fr>";
+
+        $to = $this->attributes["mail"];
+        $subject = "Réinitialisation de votre mot de passe MonBoulangerLivreur.fr";
+
+        $message = file_get_contents("/var/www/mbl/private/frags/fragMailReset.html");
+        $message = str_replace("+username+", $this->attributes["username"], $message);
+        $message = str_replace("+token+", $this->attributes["vhash"], $message);
+
+        mail($to, $subject, $message, $headers);
+    }
 }

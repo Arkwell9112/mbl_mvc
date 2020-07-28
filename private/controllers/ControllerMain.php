@@ -297,4 +297,49 @@ class ControllerMain
             header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin");
         }
     }
+
+    public static function viewReset()
+    {
+        $title = "Réinitialiser le mot de passe";
+        $firstref = "https://monboulangerlivreur.fr/public/router.php";
+        $firstfield = "Accueil";
+        $secondref = "https://monboulangerlivreur.fr/public/router.php?request=viewSignin";
+        $secondfield = "Se Connecter";
+
+        if (isset($_GET["status"])) {
+            $status = $_GET["status"];
+        } else {
+            $status = "";
+        }
+
+        include("/var/www/mbl/private/views/reset.php");
+    }
+
+    public static function actionPreReset()
+    {
+        if (isset($_POST["mail"])) {
+            $bdd = Manager::getPDO();
+
+            $statement = $bdd->prepare("SELECT * FROM users WHERE mail=:mail");
+            $statement->execute(array(
+                "mail" => $_POST["mail"]
+            ));
+            $users = $statement->fetchAll(PDO::FETCH_CLASS, "User");
+
+            if (count($users) == 1) {
+                $user = $users[0];
+
+                if ($user->getAttributes()["active"] == "1") {
+                    $user->prepareReset();
+                    header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewReset&status=yes");
+                } else {
+                    header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewReset&status=special");
+                }
+            } else {
+                header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewReset&status=badmail");
+            }
+        } else {
+            header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewReset&status=special");
+        }
+    }
 }

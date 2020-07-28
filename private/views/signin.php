@@ -20,7 +20,7 @@ include("/var/www/mbl/private/frags/fragHeader.php");
                     echo "<div class='errorpanel'>Le compte utilisateur n'est pas activé.</div>";
                 }
                 if (preg_match("#yesactive#", $status)) {
-                    echo "<div class='errorpanel'>Votre compte a bien été activé, vous pouvez vous connecter.</div>";
+                    echo "<div class='yespanel'>Votre compte a bien été activé, vous pouvez vous connecter.</div>";
                 }
                 if (preg_match("#badtoken#", $status)) {
                     echo "<div class='errorpanel'>Votre compte n'a pas pu être activé, veuillez réessayer.</div>";
@@ -30,7 +30,8 @@ include("/var/www/mbl/private/frags/fragHeader.php");
                 <input name="passwd" type="password" placeholder="Mot de passe"><br>
                 <input id="submit" type="submit" value="Connexion">
             </form>
-            <a class="bottomlink" href="reset.php">Mot de passe oublié ?</a>
+            <a class="bottomlink" href="https://monboulangerlivreur.fr/public/router.php?request=viewReset">Mot de passe
+                oublié ?</a>
         </div>
     </article>
 <?php include("/var/www/mbl/private/frags/fragFooter.php"); ?>
