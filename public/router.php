@@ -21,6 +21,8 @@ switch ($request) {
     case "actionActivate":
     case "viewReset":
     case "actionPreReset":
+    case "viewPostReset":
+    case "actionReset":
         ControllerMain::$request();
         break;
     default:

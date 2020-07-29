@@ -69,7 +69,7 @@ class User extends Model
 
         $headers = array();
         $headers["MIME-Version"] = "1.0";
-        $headers["Content-type"] = "text/html; charset=UTF-8";
+        $headers["Content-type"] = "text/html; charset=utf8";
         $headers["From"] = "MonBoulangerLivreur.fr <no-reply@monboulangerlivreur.fr>";
         $headers["Reply-To"] = "MonBoulangerLivreur.fr <contact@monboulangerlivreur.fr>";
 
@@ -79,7 +79,20 @@ class User extends Model
         $message = file_get_contents("/var/www/mbl/private/frags/fragMailReset.html");
         $message = str_replace("+username+", $this->attributes["username"], $message);
         $message = str_replace("+token+", $this->attributes["vhash"], $message);
+        $message = wordwrap($message, 70, "\r\n");
 
         mail($to, $subject, $message, $headers);
+    }
+
+    public function activate()
+    {
+        $this->set("active", "1");
+        $this->set("vhash", "");
+    }
+
+    public function reset(string $newpasswd)
+    {
+        $this->set("hashword", password_hash($newpasswd, PASSWORD_DEFAULT));
+        $this->set("vhash", "");
     }
 }

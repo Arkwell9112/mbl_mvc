@@ -288,7 +288,7 @@ class ControllerMain
             $users = $statement->fetchAll(PDO::FETCH_CLASS, "User");
 
             if (count($users) == 1) {
-                $users[0]->set("active", "1");
+                $users[0]->activate();
                 header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin&status=yesactive");
             } else {
                 header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin&status=badtoken");
@@ -340,6 +340,83 @@ class ControllerMain
             }
         } else {
             header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewReset&status=special");
+        }
+    }
+
+    public static function viewPostReset()
+    {
+        session_start();
+
+        if (isset($_GET["token"])) {
+            $token = $_GET["token"];
+        } elseif (isset($_SESSION["token"])) {
+            $token = $_SESSION["token"];
+        } else {
+            $token = "";
+        }
+
+        $_SESSION["token"] = $token;
+
+        $title = "Nouveau mot de passe";
+        $firstref = "https://monboulangerlivreur.fr/public/router.php";
+        $firstfield = "Accueil";
+        $secondref = "https://monboulangerlivreur.fr/public/router.php?request=viewSignin";
+        $secondfield = "Se Connecter";
+
+        if (isset($_GET["status"])) {
+            $status = $_GET["status"];
+        } else {
+            $status = "";
+        }
+
+        include("/var/www/mbl/private/views/resetpasswd.php");
+    }
+
+    public static function actionReset()
+    {
+        $error = "";
+
+        if (isset($_POST["passwd1"])) {
+            if (!preg_match("#[A-Z]#", $_POST["passwd1"]) || !preg_match("#[a-z]#", $_POST["passwd1"]) || !preg_match("#[0-9]#", $_POST["passwd1"]) || !preg_match("#[^A-Za-z0-9]#", $_POST["passwd1"]) || !preg_match("#.{8,}#", $_POST["passwd1"])) {
+                $error = $error . "badpasswd";
+            }
+        } else {
+            $error = $error . "badpasswd";
+        }
+
+        if (isset($_POST["passwd2"])) {
+            if ($_POST["passwd1"] != $_POST["passwd2"]) {
+                $error = $error . "diffpasswd";
+            }
+        } else {
+            $error = $error . "diffpasswd";
+        }
+
+        if ($error == "") {
+            session_start();
+
+            if (isset($_SESSION["token"])) {
+                $bdd = Manager::getPDO();
+
+                $statement = $bdd->prepare("SELECT * FROM users WHERE vhash=:token");
+                $statement->execute(array(
+                    "token" => $_SESSION["token"]
+                ));
+                unset($_SESSION["token"]);
+                $users = $statement->fetchAll(PDO::FETCH_CLASS, "User");
+
+                if (count($users) == 1) {
+                    $user = $users[0];
+                    $user->reset($_POST["passwd1"]);
+                    header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewPostReset&status=yes");
+                } else {
+                    header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewPostReset&status=special");
+                }
+            } else {
+                header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewReset");
+            }
+        } else {
+            header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewPostReset&status=$error");
         }
     }
 }
