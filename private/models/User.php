@@ -12,6 +12,11 @@ class User extends Model
     private $geocode;
     private $active;
     private $vhash;
+    private $pmethod;
+    private $pok;
+    private $date;
+    private $value;
+    private $command;
 
     public function __construct($username = null, $passwd = null, $mail = null, $phone = null, $address = null, $city = null, $geocode = null)
     {
@@ -29,6 +34,11 @@ class User extends Model
             $this->geocode = $geocode;
             $this->active = 0;
             $this->vhash = password_hash(random_int(PHP_INT_MIN, PHP_INT_MAX), PASSWORD_DEFAULT);
+            $this->pmethod = "";
+            $this->pok = "0";
+            $this->date = time();
+            $this->value = 0;
+            $this->command = "[]";
         }
 
         $this->attributes["username"] = $this->username;
@@ -40,6 +50,11 @@ class User extends Model
         $this->attributes["geocode"] = $this->geocode;
         $this->attributes["active"] = $this->active;
         $this->attributes["vhash"] = $this->vhash;
+        $this->attributes["pmethod"] = $this->pmethod;
+        $this->attributes["pok"] = $this->pok;
+        $this->attributes["date"] = $this->date;
+        $this->attributes["value"] = $this->value;
+        $this->attributes["command"] = $this->command;
     }
 
     public function insert()
@@ -94,5 +109,22 @@ class User extends Model
     {
         $this->set("hashword", password_hash($newpasswd, PASSWORD_DEFAULT));
         $this->set("vhash", "");
+    }
+
+    public function getCommand(): array
+    {
+        return json_decode($this->attributes["command"], true);
+    }
+
+    public function getCity(): City
+    {
+        $bdd = Manager::getPDO();
+
+        $statement = $bdd->prepare("SELECT * FROM cities WHERE name=:name");
+        $statement->execute(array(
+            "name" => $this->attributes["city"]
+        ));
+
+        return $statement->fetchAll(PDO::FETCH_CLASS, "City")[0];
     }
 }

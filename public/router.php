@@ -1,5 +1,6 @@
 <?php
 require_once("/var/www/mbl/private/controllers/ControllerMain.php");
+require_once("/var/www/mbl/private/controllers/ControllerAccount.php");
 
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
@@ -25,6 +26,11 @@ switch ($request) {
     case "actionReset":
         ControllerMain::$request();
         break;
+
+    case "viewAccount":
+        ControllerAccount::$request();
+        break;
+
     default:
         ControllerMain::viewMain();
 }

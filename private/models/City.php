@@ -20,4 +20,9 @@ class City extends Model
         $this->attributes["name"] = $this->name;
         $this->attributes["deliveries"] = $this->deliveries;
     }
+
+    public function getDeliveries(): array
+    {
+        return json_decode($this->attributes["deliveries"], true);
+    }
 }
