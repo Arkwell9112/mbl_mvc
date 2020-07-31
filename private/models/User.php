@@ -1,5 +1,7 @@
 <?php
 require_once("/var/www/mbl/private/models/Model.php");
+require_once("/var/www/mbl/private/models/MBLException.php");
+require_once("/var/www/mbl/private/models/Product.php");
 
 class User extends Model
 {
@@ -126,5 +128,34 @@ class User extends Model
         ));
 
         return $statement->fetchAll(PDO::FETCH_CLASS, "City")[0];
+    }
+
+    public function setCommand(array $command)
+    {
+        $command = json_encode($command);
+        $this->set("command", $command);
+    }
+
+    public function addProduct(string $name)
+    {
+        try {
+            $product = Product::getProductByName($name);
+            $deliveries = $this->getCity()->getDeliveries();
+            $command = $this->getCommand();
+
+            if (!isset($command[$name])) {
+                $command[$name] = array();
+                foreach ($deliveries as $key => $time) {
+                    if ($time != 0) {
+                        $command[$name][$key] = 0;
+                    } else {
+                        $command[$name][$key] = -1;
+                    }
+                }
+                $this->setCommand($command);
+            }
+        } catch (MBLException $e) {
+
+        }
     }
 }

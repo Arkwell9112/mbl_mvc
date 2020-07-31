@@ -1,5 +1,8 @@
 <?php
 include("/var/www/mbl/private/frags/fragHeader.php");
+
+echo "<div style='display: none' id='products'>$products</div>";
+echo "<script src='https://monboulangerlivreur.fr/public/scripts/usereditor.js'></script>";
 ?>
     <article id="firstarticle">
         <div class="title">
@@ -25,6 +28,7 @@ include("/var/www/mbl/private/frags/fragHeader.php");
                 <?php
                 foreach ($user->getCommand() as $name => $days) {
                     echo "<tr>";
+                    echo "<td>$name</td>";
                     foreach ($days as $amount) {
                         if ($amount >= 0) {
                             echo "<td>$amount<td>";
@@ -37,7 +41,7 @@ include("/var/www/mbl/private/frags/fragHeader.php");
                 }
                 ?>
                 <tr>
-                    <td id="addcell" colspan='9'><span id='addbutton'>Ajoutez un produit</span></td>
+                    <td id="addcell" colspan='9'><span id='addbutton'>Ajouter un produit</span></td>
                 </tr>
                 </tbody>
             </table>
