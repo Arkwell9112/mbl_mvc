@@ -30,6 +30,8 @@ switch ($request) {
     case "viewAccount":
     case "actionAddProduct":
     case "actionDeleteProduct":
+    case "actionDisconnect":
+    case "actionEditProduct":
         ControllerAccount::$request();
         break;
 

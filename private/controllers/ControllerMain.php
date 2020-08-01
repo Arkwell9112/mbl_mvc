@@ -94,7 +94,7 @@ class ControllerMain
         $error = "";
 
         if (isset($_POST["username"])) {
-            if (!preg_match("#[A-Za-z0-9]{4,}#", $_POST["username"])) {
+            if (!preg_match("#^[A-Za-z0-9]{4,}$#", $_POST["username"])) {
                 $error = $error . "badusername";
             }
         } else {
@@ -118,7 +118,7 @@ class ControllerMain
         }
 
         if (isset($_POST["phone"])) {
-            if (!preg_match("#[0-9]{10}#", $_POST["phone"])) {
+            if (!preg_match("#^[0-9]{10}$#", $_POST["phone"])) {
                 $error = $error . "badphone";
             }
         } else {

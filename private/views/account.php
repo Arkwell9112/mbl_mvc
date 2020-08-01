@@ -10,6 +10,11 @@ echo "<script src='https://monboulangerlivreur.fr/public/scripts/usereditor.js'>
             <h3>Mes livraisons</h3>
         </div>
         <div id="tablecontainment" class="tablecontain">
+            <?php
+            if (preg_match("#badtime#", $status)) {
+                echo "<div class='errorpanel'>Vous ne pouvez pas modifier votre commande si cela affecte votre commande pour le jour même.</div>";
+            }
+            ?>
             <table>
                 <thead>
                 <tr>
@@ -32,7 +37,7 @@ echo "<script src='https://monboulangerlivreur.fr/public/scripts/usereditor.js'>
                     echo "<td>$name - $price</td>";
                     foreach ($days as $amount) {
                         if ($amount >= 0) {
-                            echo "<td>$amount<td>";
+                            echo "<td>$amount</td>";
                         } else {
                             echo "<td>Non livré.</td>";
                         }

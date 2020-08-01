@@ -159,16 +159,35 @@ class User extends Model
         }
     }
 
-    public function deleteProduct(string $name)
+    public function deleteProduct(string $name, bool $strictRequire)
     {
         $command = $this->getCommand();
         if (isset($command[$name])) {
-            if ($command[$name][Manager::getDay()] <= 0) {
+            if ($command[$name][Manager::getDay()] <= 0 || !$strictRequire) {
                 unset($command[$name]);
                 $this->setCommand($command);
             } else {
                 throw new MBLException("badtime");
             }
         }
+    }
+
+    public function editProduct(string $name, array $table)
+    {
+        $command = $this->getCommand();
+        if (isset($command[$name])) {
+            if ($command[$name][Manager::getDay()] == $table[Manager::getDay()]) {
+                foreach ($command[$name] as $key => $amount) {
+                    if (isset($table[$key])) {
+                        if ($amount >= 0 && preg_match("#^[0-9]+$#", $table[$key])) {
+                            $command[$name][$key] = $table[$key];
+                        }
+                    }
+                }
+            } else {
+                throw new MBLException("badtime");
+            }
+        }
+        $this->setCommand($command);
     }
 }
