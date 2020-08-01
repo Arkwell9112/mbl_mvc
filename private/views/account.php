@@ -1,7 +1,7 @@
 <?php
 include("/var/www/mbl/private/frags/fragHeader.php");
 
-echo "<div style='display: none' id='products'>$products</div>";
+echo "<div style='display: none' class='products'>$products</div>";
 echo "<script src='https://monboulangerlivreur.fr/public/scripts/usereditor.js'></script>";
 ?>
     <article id="firstarticle">
@@ -28,12 +28,13 @@ echo "<script src='https://monboulangerlivreur.fr/public/scripts/usereditor.js'>
                 <?php
                 foreach ($user->getCommand() as $name => $days) {
                     echo "<tr>";
-                    echo "<td>$name</td>";
+                    $price = number_format(Product::getProductByName($name)->getAttributes()["price"], 2) . " €";
+                    echo "<td>$name - $price</td>";
                     foreach ($days as $amount) {
                         if ($amount >= 0) {
                             echo "<td>$amount<td>";
                         } else {
-                            echo "Non livré.";
+                            echo "<td>Non livré.</td>";
                         }
                     }
                     echo "<td><span class='editbutton editorbutton'>Modifier </span><br><br><span class='editbutton deletebutton'>Supprimer </span></td>";
@@ -41,7 +42,7 @@ echo "<script src='https://monboulangerlivreur.fr/public/scripts/usereditor.js'>
                 }
                 ?>
                 <tr>
-                    <td id="addcell" colspan='9'><span id='addbutton'>Ajouter un produit</span></td>
+                    <td id="addcell" colspan='9'><span id="addbutton">Ajouter un produit</span></td>
                 </tr>
                 </tbody>
             </table>

@@ -158,4 +158,17 @@ class User extends Model
 
         }
     }
+
+    public function deleteProduct(string $name)
+    {
+        $command = $this->getCommand();
+        if (isset($command[$name])) {
+            if ($command[$name][Manager::getDay()] <= 0) {
+                unset($command[$name]);
+                $this->setCommand($command);
+            } else {
+                throw new MBLException("badtime");
+            }
+        }
+    }
 }

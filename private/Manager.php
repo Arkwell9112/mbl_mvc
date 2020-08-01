@@ -31,4 +31,14 @@ class Manager
 
         return self::$google;
     }
+
+    public static function getDay(): int
+    {
+        $day = date("w");
+        $day--;
+        if ($day < 0) {
+            $day = 6;
+        }
+        return $day;
+    }
 }

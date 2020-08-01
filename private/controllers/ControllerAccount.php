@@ -28,13 +28,48 @@ class ControllerAccount
                 $products = $products . "<option value='$name'>$name - $price €</option>";
             }
 
-            $products = "<select class='productselect' id='productselect'>
+            $products = "<select class='productselect'>
                        <option value='none'>Sélectionnez un produit à ajouter</option>
                        $products
                        </select><br><br>
                        <span class='editbutton addvalidatebutton'>Valider</span>";
 
             include("/var/www/mbl/private/views/account.php");
+        } catch (MBLException $e) {
+            header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin");
+        }
+    }
+
+    public static function actionAddProduct()
+    {
+        try {
+            $connection = Connection::retrieveConnection();
+            $user = $connection->getUser();
+
+            if (isset($_GET["name"])) {
+                $user->addProduct($_GET["name"]);
+            }
+            header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount");
+        } catch (MBLException $e) {
+            header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin");
+        }
+    }
+
+    public static function actionDeleteProduct()
+    {
+        try {
+            $connection = Connection::retrieveConnection();
+            $user = $connection->getUser();
+
+            if (isset($_GET["name"])) {
+                try {
+                    $user->deleteProduct($_GET["name"]);
+                    header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount");
+                } catch (MBLException $e) {
+                    $status = $e->getMessage();
+                    header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount&status=$status");
+                }
+            }
         } catch (MBLException $e) {
             header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin");
         }
