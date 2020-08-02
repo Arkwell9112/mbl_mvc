@@ -4,6 +4,7 @@ require_once("/var/www/mbl/private/models/User.php");
 require_once("/var/www/mbl/private/models/Connection.php");
 require_once("/var/www/mbl/private/models/City.php");
 require_once("/var/www/mbl/private/models/Product.php");
+require_once("/var/www/mbl/private/vendor/autoload.php");
 
 class ControllerAccount
 {
@@ -116,6 +117,46 @@ class ControllerAccount
                 } else {
                     header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount");
                 }
+            }
+        } catch (MBLException $e) {
+            header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin");
+        }
+    }
+
+    public static function actionAddPayment()
+    {
+        try {
+            $connection = Connection::retrieveConnection();
+            $user = $connection->getUser();
+
+            if (isset($_POST["cardnumber"]) && isset($_POST["expireMM"]) && isset($_POST["expireYY"]) && isset($_POST["ccv"])) {
+                $cardnumber = preg_replace("#[^0-9]#", "", $_POST["cardnumber"]);
+
+                $stripe = new \Stripe\StripeClient(Manager::getStripeKey());
+                $method = $stripe->paymentMethods->create([
+                    'type' => 'card',
+                    'card' => [
+                        'number' => $cardnumber,
+                        'exp_month' => $_POST["expireMM"],
+                        'exp_year' => $_POST["expireYY"],
+                        'cvc' => $_POST["ccv"]
+                    ],
+                    'billing_details' => [
+                        'address' => [
+                            "city" => explode(" ", $user->getAttributes()["city"])[1],
+                            "country" => "FR",
+                            "line1" => explode(",", $user->getAttributes()["address"])[0],
+                            "postal_code" => explode(" ", $user->getAttributes()["city"])[0]
+                        ],
+                        'email' => $user->getAttributes()["mail"],
+                        'phone' => $user->getAttributes()["phone"]
+                    ],
+                    'metadata' => [
+                        'username' => $user->getAttributes()["username"]
+                    ]
+                ]);
+                echo $method;
+                //TODO
             }
         } catch (MBLException $e) {
             header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin");

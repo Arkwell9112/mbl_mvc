@@ -190,4 +190,23 @@ class User extends Model
         }
         $this->setCommand($command);
     }
+
+    public function pauseDay(int $day)
+    {
+        $command = $this->getCommand();
+        foreach ($command as $key => $product) {
+            $command[$key][$day] = -1;
+        }
+        $this->setCommand($command);
+    }
+
+    public function resumeDay(int $day)
+    {
+        $command = $this->getCommand();
+        foreach ($command as $key => $product) {
+            if ($command[$key][$day] == -1) {
+                $command[$key][$day] == 0;
+            }
+        }
+    }
 }

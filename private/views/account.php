@@ -92,9 +92,15 @@ echo "<script src='https://monboulangerlivreur.fr/public/scripts/usereditor.js'>
             <img id="wallet" src="https://monboulangerlivreur.fr/public/imgs/money.svg">
             <h3>Mon moyen de paiement</h3>
         </div>
-        <p>
-
-        </p>
+        <div class="signform">
+            <h3>Informations de carte bancaire:</h3>
+            <?php
+            if ($user->getAttributes()["pmethod"] == "") {
+                echo "<div class='infopanel'>Vous n'avez aucune méthode de paiement d'enregistrée. Vos commandes ne donc pas encore prises en compte.</div>";
+                include("/var/www/mbl/private/frags/fragCard.php");
+            }
+            ?>
+        </div>
     </article>
     <!-- Rappelle des données personnelles possédées par le site. -->
     <article>

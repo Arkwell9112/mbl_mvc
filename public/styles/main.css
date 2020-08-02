@@ -76,6 +76,21 @@ article .signform a:hover {
     font-weight: bold;
 }
 
+article .signform label {
+    font-family: worksans;
+    font-size: 1.2vw;
+    margin-top: 5px;
+    padding-top: 5px;
+}
+
+article .signform #ccn {
+    margin-left: 10px;
+}
+
+article .signform #ccv {
+    margin-top: 5px;
+}
+
 .bottomlink {
     display: block;
     text-decoration: underline;

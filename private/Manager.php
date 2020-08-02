@@ -5,6 +5,7 @@ class Manager
 {
     private static $pdo;
     private static $google;
+    private static $stripe;
 
     public static function getPDO(): PDO
     {
@@ -40,5 +41,16 @@ class Manager
             $day = 6;
         }
         return $day;
+    }
+
+    public static function getStripeKey()
+    {
+        if (!isset(self::$stripe)) {
+            $key = array();
+            exec("cat /etc/mbl.creds", $key);
+            self::$stripe = $key[6];
+        }
+
+        return self::$stripe;
     }
 }
