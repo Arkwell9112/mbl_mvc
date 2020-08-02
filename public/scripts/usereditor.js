@@ -1,8 +1,17 @@
 window.addEventListener("load", begin);
 
+let card;
+let stripe;
+
 function begin() {
     let deletebuttons = document.getElementsByClassName("deletebutton");
     let editbuttons = document.getElementsByClassName("editorbutton");
+    stripe = Stripe("pk_test_51Grjv6HQXmOPYXA5sbNkiwgHuYi72aVm5j1a94NOfUgj9ygy983K5NweAXTjjmnAl2JMmZUoOYCkt4NVk4NTNRYz00GQRPANEY");
+    let elements = stripe.elements();
+    card = elements.create('card');
+    card.mount("#cardelement");
+
+    document.getElementById("methodbutton").addEventListener("click", method);
 
     for (let i = 0; i <= deletebuttons.length - 1; i++) {
         deletebuttons[i].addEventListener("click", suppr);
@@ -74,4 +83,18 @@ function editvalidate(e) {
 
     let name = row.getElementsByTagName("td")[0].innerText.split(" - ")[0];
     window.location.href = "https://monboulangerlivreur.fr/public/router.php?request=actionEditProduct&name=" + name + "&table=" + table;
+}
+
+function method() {
+    stripe.createPaymentMethod({
+        type: "card",
+        card: card
+    }).then(function (result) {
+        if (result.hasOwnProperty("paymentMethod")) {
+            document.getElementById("pmoutput").value = result.paymentMethod.id;
+            document.getElementById("formpmoutput").submit();
+        } else {
+            window.location.href = "https://monboulangerlivreur.fr/public/router.php?request=viewAccount&status=badcard1";
+        }
+    });
 }

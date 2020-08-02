@@ -129,34 +129,28 @@ class ControllerAccount
             $connection = Connection::retrieveConnection();
             $user = $connection->getUser();
 
-            if (isset($_POST["cardnumber"]) && isset($_POST["expireMM"]) && isset($_POST["expireYY"]) && isset($_POST["ccv"])) {
-                $cardnumber = preg_replace("#[^0-9]#", "", $_POST["cardnumber"]);
+            $stripe = new \Stripe\StripeClient(Manager::getStripeKey());
 
-                $stripe = new \Stripe\StripeClient(Manager::getStripeKey());
-                $method = $stripe->paymentMethods->create([
-                    'type' => 'card',
-                    'card' => [
-                        'number' => $cardnumber,
-                        'exp_month' => $_POST["expireMM"],
-                        'exp_year' => $_POST["expireYY"],
-                        'cvc' => $_POST["ccv"]
-                    ],
-                    'billing_details' => [
-                        'address' => [
-                            "city" => explode(" ", $user->getAttributes()["city"])[1],
-                            "country" => "FR",
-                            "line1" => explode(",", $user->getAttributes()["address"])[0],
-                            "postal_code" => explode(" ", $user->getAttributes()["city"])[0]
+            if (isset($_POST["pm"])) {
+                try {
+                    $setup = $stripe->setupIntents->create([
+                        "confirm" => true,
+                        "metadata" => [
+                            "username" => $user->getAttributes()["username"]
                         ],
-                        'email' => $user->getAttributes()["mail"],
-                        'phone' => $user->getAttributes()["phone"]
-                    ],
-                    'metadata' => [
-                        'username' => $user->getAttributes()["username"]
-                    ]
-                ]);
-                echo $method;
-                //TODO
+                        "payment_method" => $_POST["pm"],
+                        "return_url" => "https://monboulangerlivreur.fr/public/router.php?request=viewAccount&status=inprogress",
+                        "usage" => "off_session"
+                    ]);
+                    if (isset($setup->next_action)) {
+                        $url = $setup->next_action["redirect_to_url"]["url"];
+                        header("Location: $url");
+                    } else {
+                        header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount&status=inprogress");
+                    }
+                } catch (Exception $e) {
+                    header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount&status=badcard");
+                }
             }
         } catch (MBLException $e) {
             header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin");

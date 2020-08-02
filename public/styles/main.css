@@ -54,10 +54,6 @@ article .signform input {
     color: black;
 }
 
-article .signform select {
-    width: 60%;
-}
-
 article .signform .select2 {
     margin-top: 3vw;
     margin-bottom: 2vw;
@@ -74,21 +70,6 @@ article .signform a {
 
 article .signform a:hover {
     font-weight: bold;
-}
-
-article .signform label {
-    font-family: worksans;
-    font-size: 1.2vw;
-    margin-top: 5px;
-    padding-top: 5px;
-}
-
-article .signform #ccn {
-    margin-left: 10px;
-}
-
-article .signform #ccv {
-    margin-top: 5px;
 }
 
 .bottomlink {

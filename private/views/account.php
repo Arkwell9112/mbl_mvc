@@ -3,6 +3,7 @@ include("/var/www/mbl/private/frags/fragHeader.php");
 
 echo "<div style='display: none' class='products'>$products</div>";
 echo "<script src='https://monboulangerlivreur.fr/public/scripts/usereditor.js'></script>";
+echo "<script src='https://js.stripe.com/v3/'></script>";
 ?>
     <article id="firstarticle">
         <div class="title">
@@ -93,11 +94,19 @@ echo "<script src='https://monboulangerlivreur.fr/public/scripts/usereditor.js'>
             <h3>Mon moyen de paiement</h3>
         </div>
         <div class="signform">
-            <h3>Informations de carte bancaire:</h3>
             <?php
+            if (preg_match("#inprogress#", $status)) {
+                echo "<div class='yespanel'>Votre méthode de paiement est en cour de vérification par l'autorité bancaire, veuillez raffraîchir la page dans quelques minutes. Si votre méthode de paiement n'a pas été ajoutée, veuillez réessayer.</div>";
+            }
+
+            if (preg_match("#badcard#", $status)) {
+                echo "<div class='errorpanel'>Votre carte a été refusée par l'autorité bancaire, veuillez réessayer.</div>";
+            }
+
             if ($user->getAttributes()["pmethod"] == "") {
-                echo "<div class='infopanel'>Vous n'avez aucune méthode de paiement d'enregistrée. Vos commandes ne donc pas encore prises en compte.</div>";
-                include("/var/www/mbl/private/frags/fragCard.php");
+                include("/var/www/mbl/private/frags/fragCard.html");
+            } else {
+                
             }
             ?>
         </div>
