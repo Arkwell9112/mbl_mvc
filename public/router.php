@@ -33,6 +33,8 @@ switch ($request) {
     case "actionDisconnect":
     case "actionEditProduct":
     case "actionAddPayment":
+    case "actionRedirectIntent":
+    case "endpointSetupIntent":
         ControllerAccount::$request();
         break;
 

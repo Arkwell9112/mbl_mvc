@@ -139,7 +139,7 @@ class ControllerAccount
                             "username" => $user->getAttributes()["username"]
                         ],
                         "payment_method" => $_POST["pm"],
-                        "return_url" => "https://monboulangerlivreur.fr/public/router.php?request=viewAccount&status=inprogress",
+                        "return_url" => "https://monboulangerlivreur.fr/public/router.php?request=actionRedirectIntent",
                         "usage" => "off_session"
                     ]);
                     if (isset($setup->next_action)) {
@@ -155,5 +155,81 @@ class ControllerAccount
         } catch (MBLException $e) {
             header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin");
         }
+    }
+
+    public static function actionRedirectIntent()
+    {
+        if (isset($_GET["setup_intent"])) {
+            $stripe = new \Stripe\StripeClient(Manager::getStripeKey());
+
+            try {
+                $intent = $stripe->setupIntents->retrieve($_GET["setup_intent"]);
+
+                if (isset($intent->next_action)) {
+                    $url = $setup->next_action["redirect_to_url"]["url"];
+                    header("Location: $url");
+                } else {
+                    if ($intent->status == "succeeded") {
+                        header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount&status=inprogress");
+                    } else {
+                        header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount&status=badcard");
+                    }
+                }
+            } catch (Exception $e) {
+                header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount&status=badcard");
+            }
+        } else {
+            header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount");
+        }
+    }
+
+    public static function endpointSetupIntent()
+    {
+        \Stripe\Stripe::setApiKey(Manager::getStripeKey());
+
+        $endpoint_secret = Manager::getStripeEndpoint(0);
+
+        $payload = @file_get_contents('php://input');
+        $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+        $event = null;
+
+        try {
+            $event = \Stripe\Webhook::constructEvent(
+                $payload, $sig_header, $endpoint_secret
+            );
+        } catch (\UnexpectedValueException $e) {
+            // Invalid payload
+            http_response_code(400);
+            exit();
+        } catch (\Stripe\Exception\SignatureVerificationException $e) {
+            // Invalid signature
+            http_response_code(400);
+            exit();
+        }
+
+        switch ($event->type) {
+            case 'setup_intent.succeeded':
+                $intent = $event->data->object;
+
+                $bdd = Manager::getPDO();
+                $statement = $bdd->prepare("SELECT * FROM users WHERE username=:username");
+                $statement->execute(array(
+                    "username" => $intent->metadata["username"]
+                ));
+                $user = $statement->fetchAll(PDO::FETCH_CLASS, "User");
+
+                if (count($user) == 1) {
+                    $user = $user[0];
+                    $user->set("pmethod", $intent->payment_method);
+                    $user->set("pok", 1);
+                }
+                break;
+
+            default:
+                http_response_code(400);
+                exit();
+        }
+
+        http_response_code(200);
     }
 }

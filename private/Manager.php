@@ -22,7 +22,7 @@ class Manager
         return self::$pdo;
     }
 
-    public static function getGoogleKey()
+    public static function getGoogleKey(): string
     {
         if (!isset(self::$google)) {
             $key = array();
@@ -43,7 +43,7 @@ class Manager
         return $day;
     }
 
-    public static function getStripeKey()
+    public static function getStripeKey(): string
     {
         if (!isset(self::$stripe)) {
             $key = array();
@@ -52,5 +52,12 @@ class Manager
         }
 
         return self::$stripe;
+    }
+
+    public static function getStripeEndpoint(int $i): string
+    {
+        $endpoint = array();
+        exec("cat /etc/mbl.creds", $endpoint);
+        return $endpoint[7 + $i];
     }
 }

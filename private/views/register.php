@@ -63,7 +63,7 @@ include("/var/www/mbl/private/frags/fragHeader.php");
                 ?>
                 <input value="<?php if (isset($_GET["address"])) echo $_GET["address"] ?>"
                        placeholder="N° et nom de rue"
-                       type="text" name="address">
+                       type="text" name="address"><br>
                 <?php
                 if (preg_match("#badcity#", $status)) {
                     echo "<div class='errorpanel'>La ville choisie est incorrecte.</div>";

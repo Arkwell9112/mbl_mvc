@@ -9,9 +9,13 @@ function begin() {
     stripe = Stripe("pk_test_51Grjv6HQXmOPYXA5sbNkiwgHuYi72aVm5j1a94NOfUgj9ygy983K5NweAXTjjmnAl2JMmZUoOYCkt4NVk4NTNRYz00GQRPANEY");
     let elements = stripe.elements();
     card = elements.create('card');
-    card.mount("#cardelement");
+    if (document.getElementById("cardelement")) {
+        card.mount("#cardelement");
+    }
 
-    document.getElementById("methodbutton").addEventListener("click", method);
+    if (document.getElementById("methodbutton")) {
+        document.getElementById("methodbutton").addEventListener("click", method);
+    }
 
     for (let i = 0; i <= deletebuttons.length - 1; i++) {
         deletebuttons[i].addEventListener("click", suppr);

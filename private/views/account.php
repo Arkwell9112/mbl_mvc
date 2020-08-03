@@ -103,10 +103,19 @@ echo "<script src='https://js.stripe.com/v3/'></script>";
                 echo "<div class='errorpanel'>Votre carte a été refusée par l'autorité bancaire, veuillez réessayer.</div>";
             }
 
+            $user->update();
             if ($user->getAttributes()["pmethod"] == "") {
                 include("/var/www/mbl/private/frags/fragCard.html");
+            } elseif (!preg_match("#editcard#", $status)) {
+                $stripe = new \Stripe\StripeClient(Manager::getStripeKey());
+                try {
+                    $method = $stripe->paymentMethods->retrieve($user->getAttributes()["pmethod"]);
+                    include("/var/www/mbl/private/frags/fragShowCard.php");
+                } catch (Exception $e) {
+
+                }
             } else {
-                
+                include("/var/www/mbl/private/frags/fragCard.html");
             }
             ?>
         </div>
