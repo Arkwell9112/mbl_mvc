@@ -4,6 +4,14 @@ include("/var/www/mbl/private/frags/fragHeader.php");
 echo "<div style='display: none' class='products'>$products</div>";
 echo "<script src='https://monboulangerlivreur.fr/public/scripts/usereditor.js'></script>";
 echo "<script src='https://js.stripe.com/v3/'></script>";
+
+if ($user->getAttributes()["pok"] == 0) {
+    echo "<div class='infopanel'>Aucune méthode de paiement n'est activée sur votre compte, vous pouvez paramétrer vos commandes mais celles-ci ne seront pas prises en compte.</div>";
+} elseif ($user->getAttributes()["pok"]) {
+    echo "<div class='yespanel'>Une méthode de paiement est correctement configurée, vos commandes sont bien prises en compte.</div>";
+} else {
+    echo "<div class='errorpanel'>Votre compte est suspendu pour défaut de paiement.</div>";
+}
 ?>
     <article id="firstarticle">
         <div class="title">
@@ -101,6 +109,10 @@ echo "<script src='https://js.stripe.com/v3/'></script>";
 
             if (preg_match("#baddatecard#", $status)) {
                 echo "<div class='errorpanel'>La date d'expiration de votre carte est trop courte pour vous permettre d'utiliser ce service.</div>";
+            }
+
+            if (preg_match("#badcontextdel#", $status)) {
+                echo "<div class='errorpanel'>Vous ne pouvez pas supprimer votre mode de paiement si vous devez encore de l'argent ou si la tournée en cour n'est pas terminée (la tournée finit tous les jours à 14H).</div>";
             }
 
             if (preg_match("#badcard#", $status)) {
