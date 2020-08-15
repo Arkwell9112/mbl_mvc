@@ -99,6 +99,10 @@ echo "<script src='https://js.stripe.com/v3/'></script>";
                 echo "<div class='yespanel'>Votre méthode de paiement est en cour de vérification par l'autorité bancaire, veuillez raffraîchir la page dans quelques minutes. Si votre méthode de paiement n'a pas été ajoutée, veuillez réessayer.</div>";
             }
 
+            if (preg_match("#baddatecard#", $status)) {
+                echo "<div class='errorpanel'>La date d'expiration de votre carte est trop courte pour vous permettre d'utiliser ce service.</div>";
+            }
+
             if (preg_match("#badcard#", $status)) {
                 echo "<div class='errorpanel'>Votre carte a été refusée par l'autorité bancaire, veuillez réessayer.</div>";
             }

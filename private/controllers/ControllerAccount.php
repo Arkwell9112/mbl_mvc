@@ -133,6 +133,12 @@ class ControllerAccount
 
             if (isset($_POST["pm"])) {
                 try {
+                    $method = $stripe->paymentMethods->retrieve($_POST["pm"]);
+                    if ($method->card["exp_year"] == date("Y") && $method->card["exp_month"] == date("m")) {
+                        header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount&status=baddatecard");
+                        ob_flush();
+                        exit();
+                    }
                     $setup = $stripe->setupIntents->create([
                         "confirm" => true,
                         "metadata" => [
@@ -231,5 +237,23 @@ class ControllerAccount
         }
 
         http_response_code(200);
+    }
+
+    public static function actionDeletePayment()
+    {
+        try {
+            $connection = Connection::retrieveConnection();
+            $user = $connection->getUser();
+
+            if ($user->getAttributes()["value"] == 0 && date("G") >= 14) {
+                $user->set("pok", 0);
+                $user->set("pmethod", "");
+                header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount");
+            } else {
+                header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewAccount&status=badcontextdel");
+            }
+        } catch (MBLException $e) {
+            header("Location: https://monboulangerlivreur.fr/public/router.php?request=viewSignin");
+        }
     }
 }

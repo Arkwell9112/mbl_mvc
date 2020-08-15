@@ -5,6 +5,8 @@ require_once("/var/www/mbl/private/controllers/ControllerAccount.php");
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
+date_default_timezone_set("Europe/Paris");
+
 if (isset($_GET["request"])) {
     $request = $_GET["request"];
 } else {
@@ -35,6 +37,7 @@ switch ($request) {
     case "actionAddPayment":
     case "actionRedirectIntent":
     case "endpointSetupIntent":
+    case "actionDeletePayment":
         ControllerAccount::$request();
         break;
 
